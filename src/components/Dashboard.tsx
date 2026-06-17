@@ -4,8 +4,7 @@ import { useState } from "react";
 import {
   buildDraftApprovalStep,
   buildDraftRejectionStep,
-  buildInitialAgentStep
-  ,
+  buildInitialAgentStep,
   buildSendPlanApprovalStep,
   buildSendPlanRejectionStep
 } from "@/lib/agent-runner";
@@ -94,81 +93,124 @@ export function Dashboard({ initialData }: Props) {
     setApprovedPayload(null);
   }
 
+  const conversation = messages.map((message, index) => {
+    const isUser = message.startsWith("User:");
+    return {
+      id: `${message}-${index}`,
+      role: isUser ? "user" : "agent",
+      body: message.replace(/^(User|Agent):\s*/, "")
+    };
+  });
+
   return (
     <main className="page">
-      <section className="hero">
-        <span className="pill">Step 1 MVP</span>
-        <h1>WhatsApp Skill Harness</h1>
-        <p>A chat-first demo for skill-driven outreach approvals and JSON export.</p>
-      </section>
-
-      <div className="grid">
-        <section className="card stack">
-          <h2>Agent Setup</h2>
-          <label className="field">
+      <section className="chat-shell">
+        <header className="chat-topbar">
+          <div>
+            <span className="pill">Step 1 MVP</span>
+            <h1>WhatsApp Skill Harness</h1>
+            <p className="muted">A chat-first demo for skill-driven outreach approvals and JSON export.</p>
+          </div>
+          <label className="field sender-field">
             <span>Sender identity</span>
             <input value={senderIdentity} onChange={(event) => setSenderIdentity(event.target.value)} />
           </label>
-          <label className="field">
-            <span>Chat with agent</span>
-            <textarea value={prompt} onChange={(event) => setPrompt(event.target.value)} />
-          </label>
-          <button className="button" onClick={handleSend}>
-            Send
-          </button>
-        </section>
+        </header>
 
-        <section className="card stack">
-          <h2>Chat</h2>
-          {messages.length ? (
-            <ul className="list">
-              {messages.map((message, index) => (
-                <li key={`${message}-${index}`}>{message}</li>
+        <section className="chat-thread" aria-label="Chat">
+          {conversation.length ? (
+            <>
+              {conversation.map((entry) => (
+                <article
+                  key={entry.id}
+                  className={`message-row ${entry.role === "user" ? "message-row-user" : "message-row-agent"}`}
+                >
+                  <div className="message-meta">{entry.role === "user" ? "You" : "Agent"}</div>
+                  <div className={`message-bubble ${entry.role === "user" ? "message-bubble-user" : "message-bubble-agent"}`}>
+                    {entry.body}
+                  </div>
+                </article>
               ))}
-            </ul>
+
+              {status === "awaiting_draft_approval" ? (
+                <article className="message-row message-row-agent">
+                  <div className="message-meta">Agent</div>
+                  <section className="approval-card">
+                    <div className="approval-card-header">
+                      <h2>Draft Review</h2>
+                      <span className="approval-tag">{recipients.length} recipients</span>
+                    </div>
+                    <p className="muted">Review and edit the draft before moving to the send plan.</p>
+                    <textarea value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} />
+                    <div className="row">
+                      <button className="button" onClick={handleApproveDraft}>
+                        Approve Draft
+                      </button>
+                      <button className="button danger" onClick={handleRejectDraft}>
+                        Reject
+                      </button>
+                    </div>
+                  </section>
+                </article>
+              ) : null}
+
+              {status === "awaiting_send_plan_approval" && sendPlanPreview ? (
+                <article className="message-row message-row-agent">
+                  <div className="message-meta">Agent</div>
+                  <section className="approval-card">
+                    <div className="approval-card-header">
+                      <h2>Send Plan Review</h2>
+                      <span className="approval-tag">Ready to export</span>
+                    </div>
+                    <pre>{JSON.stringify(sendPlanPreview, null, 2)}</pre>
+                    <div className="row">
+                      <button className="button" onClick={handleApproveSendPlan}>
+                        Approve Send Plan
+                      </button>
+                      <button className="button danger" onClick={handleRejectSendPlan}>
+                        Reject
+                      </button>
+                    </div>
+                  </section>
+                </article>
+              ) : null}
+
+              {status === "approved_json_ready" && approvedPayload ? (
+                <article className="message-row message-row-agent">
+                  <div className="message-meta">Agent</div>
+                  <section className="approval-card">
+                    <div className="approval-card-header">
+                      <h2>Approved JSON</h2>
+                      <span className="approval-tag success-tag">Ready</span>
+                    </div>
+                    <pre>{JSON.stringify(approvedPayload, null, 2)}</pre>
+                  </section>
+                </article>
+              ) : null}
+            </>
           ) : (
-            <p className="muted">No messages yet.</p>
+            <div className="empty-thread">
+              <span className="pill">Agent</span>
+              <p>Chat with agent</p>
+              <p className="muted">Try: do a whatsapp outreach for +8123 and +81234</p>
+            </div>
           )}
         </section>
 
-        {status === "awaiting_draft_approval" ? (
-          <section className="card stack">
-            <h2>Draft Review</h2>
-            <p className="muted">{recipients.length} recipient(s) resolved from the prompt.</p>
-            <textarea value={draftMessage} onChange={(event) => setDraftMessage(event.target.value)} />
-            <div className="row">
-              <button className="button" onClick={handleApproveDraft}>
-                Approve Draft
-              </button>
-              <button className="button danger" onClick={handleRejectDraft}>
-                Reject
-              </button>
-            </div>
-          </section>
-        ) : null}
-
-        {status === "awaiting_send_plan_approval" && sendPlanPreview ? (
-          <section className="card stack">
-            <h2>Send Plan Review</h2>
-            <pre>{JSON.stringify(sendPlanPreview, null, 2)}</pre>
-            <div className="row">
-              <button className="button" onClick={handleApproveSendPlan}>
-                Approve Send Plan
-              </button>
-              <button className="button danger" onClick={handleRejectSendPlan}>
-                Reject
-              </button>
-            </div>
-          </section>
-        ) : null}
-
-        {status === "approved_json_ready" && approvedPayload ? (
-          <section className="card stack">
-            <h2>Approved JSON</h2>
-            <pre>{JSON.stringify(approvedPayload, null, 2)}</pre>
-          </section>
-        ) : null}
-      </div>
+        <footer className="composer">
+          <label className="composer-field">
+            <span className="sr-only">Chat with agent</span>
+            <textarea
+              value={prompt}
+              onChange={(event) => setPrompt(event.target.value)}
+              placeholder="Chat with agent"
+            />
+          </label>
+          <button className="button composer-send" onClick={handleSend}>
+            Send
+          </button>
+        </footer>
+      </section>
     </main>
   );
 }
