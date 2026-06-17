@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildInitialAgentStep,
   buildBlockedNoRecipientsMessage,
   buildApprovedPayload,
   buildDraftMessage,
@@ -53,6 +54,29 @@ describe("agent runner", () => {
       senderIdentity: "+6591240000",
       recipients: ["+8123", "+81234"],
       message: "Custom approved copy"
+    });
+  });
+
+  it("builds a blocked initial step when no phone numbers are found", () => {
+    expect(buildInitialAgentStep("do a whatsapp outreach for the sales leads")).toEqual({
+      status: "blocked_no_recipients",
+      chatMessages: [
+        "User: do a whatsapp outreach for the sales leads",
+        "Agent: I could not find any phone numbers in that request."
+      ]
+    });
+  });
+
+  it("builds a draft-ready initial step when phone numbers are found", () => {
+    expect(buildInitialAgentStep("do a whatsapp outreach for +8123 and +81234")).toEqual({
+      status: "awaiting_draft_approval",
+      recipients: ["+8123", "+81234"],
+      draftMessage:
+        "Hi, I’m reaching out because we help teams run outreach more safely. Would it be worth a quick look?",
+      chatMessages: [
+        "User: do a whatsapp outreach for +8123 and +81234",
+        "Agent: I found 2 recipient(s) and prepared a draft."
+      ]
     });
   });
 });
