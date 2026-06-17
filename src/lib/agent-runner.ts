@@ -7,6 +7,10 @@ export function buildDraftMessage(): string {
   return "Hi, I’m reaching out because we help teams run outreach more safely. Would it be worth a quick look?";
 }
 
+export function buildBlockedNoRecipientsMessage(): string {
+  return "I could not find any phone numbers in that request.";
+}
+
 export function buildApprovedPayload(input: {
   senderIdentity: string;
   recipients: string[];
