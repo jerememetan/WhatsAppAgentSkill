@@ -23,3 +23,15 @@ export function buildApprovedPayload(input: {
     approved: true
   };
 }
+
+export function buildSendPlanPreview(input: {
+  senderIdentity: string;
+  recipients: string[];
+  message: string;
+}) {
+  return {
+    senderIdentity: input.senderIdentity,
+    recipients: input.recipients,
+    message: input.message
+  };
+}

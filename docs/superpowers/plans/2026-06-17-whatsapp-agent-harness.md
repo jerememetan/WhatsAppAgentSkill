@@ -186,7 +186,7 @@ describe("approved payload flow", () => {
 Run: `npm test -- tests/agent-runner.test.ts`
 Expected: PASS if already covered; if so, proceed because the UI work is now the missing implementation layer.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```tsx
 "use client";
@@ -334,12 +334,12 @@ export function Dashboard({ initialData }: { initialData: StoreData }) {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `npm test -- tests/agent-runner.test.ts`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/Dashboard.tsx
