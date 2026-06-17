@@ -80,3 +80,26 @@ export function buildDraftRejectionStep() {
     chatMessages: ["Agent: Draft rejected."]
   };
 }
+
+export function buildSendPlanApprovalStep(input: {
+  senderIdentity: string;
+  recipients: string[];
+  approvedMessage: string;
+}) {
+  return {
+    status: "approved_json_ready" as const,
+    approvedPayload: buildApprovedPayload({
+      senderIdentity: input.senderIdentity,
+      recipients: input.recipients,
+      message: input.approvedMessage
+    }),
+    chatMessages: ["Agent: Send plan approved. JSON payload is ready."]
+  };
+}
+
+export function buildSendPlanRejectionStep() {
+  return {
+    status: "send_plan_rejected" as const,
+    chatMessages: ["Agent: Send plan rejected."]
+  };
+}

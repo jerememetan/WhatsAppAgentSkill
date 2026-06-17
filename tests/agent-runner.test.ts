@@ -6,6 +6,8 @@ import {
   buildBlockedNoRecipientsMessage,
   buildApprovedPayload,
   buildDraftMessage,
+  buildSendPlanApprovalStep,
+  buildSendPlanRejectionStep,
   buildSendPlanPreview,
   extractPhoneNumbers
 } from "@/lib/agent-runner";
@@ -104,6 +106,32 @@ describe("agent runner", () => {
     expect(buildDraftRejectionStep()).toEqual({
       status: "draft_rejected",
       chatMessages: ["Agent: Draft rejected."]
+    });
+  });
+
+  it("builds an approved-json-ready step after send-plan approval", () => {
+    expect(
+      buildSendPlanApprovalStep({
+        senderIdentity: "+6591240000",
+        recipients: ["+8123", "+81234"],
+        approvedMessage: "Custom approved copy"
+      })
+    ).toEqual({
+      status: "approved_json_ready",
+      approvedPayload: {
+        senderIdentity: "+6591240000",
+        recipients: [{ phoneNumber: "+8123" }, { phoneNumber: "+81234" }],
+        message: "Custom approved copy",
+        approved: true
+      },
+      chatMessages: ["Agent: Send plan approved. JSON payload is ready."]
+    });
+  });
+
+  it("builds a stopped step after send-plan rejection", () => {
+    expect(buildSendPlanRejectionStep()).toEqual({
+      status: "send_plan_rejected",
+      chatMessages: ["Agent: Send plan rejected."]
     });
   });
 });

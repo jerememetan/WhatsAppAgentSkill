@@ -5,6 +5,9 @@ import {
   buildDraftApprovalStep,
   buildDraftRejectionStep,
   buildInitialAgentStep
+  ,
+  buildSendPlanApprovalStep,
+  buildSendPlanRejectionStep
 } from "@/lib/agent-runner";
 import type { StoreData } from "@/lib/types";
 
@@ -22,6 +25,8 @@ export function Dashboard({ initialData }: Props) {
     | "awaiting_draft_approval"
     | "awaiting_send_plan_approval"
     | "draft_rejected"
+    | "approved_json_ready"
+    | "send_plan_rejected"
   >("idle");
   const [recipients, setRecipients] = useState<string[]>([]);
   const [draftMessage, setDraftMessage] = useState("");
@@ -30,6 +35,7 @@ export function Dashboard({ initialData }: Props) {
     recipients: string[];
     message: string;
   } | null>(null);
+  const [approvedPayload, setApprovedPayload] = useState<object | null>(null);
 
   function handleSend() {
     const step = buildInitialAgentStep(prompt);
@@ -39,12 +45,14 @@ export function Dashboard({ initialData }: Props) {
     if (step.status === "awaiting_draft_approval") {
       setRecipients(step.recipients);
       setDraftMessage(step.draftMessage);
+      setApprovedPayload(null);
       return;
     }
 
     setRecipients([]);
     setDraftMessage("");
     setSendPlanPreview(null);
+    setApprovedPayload(null);
   }
 
   function handleApproveDraft() {
@@ -64,6 +72,26 @@ export function Dashboard({ initialData }: Props) {
     setMessages((current) => [...current, ...step.chatMessages]);
     setStatus(step.status);
     setSendPlanPreview(null);
+    setApprovedPayload(null);
+  }
+
+  function handleApproveSendPlan() {
+    const step = buildSendPlanApprovalStep({
+      senderIdentity,
+      recipients,
+      approvedMessage: draftMessage
+    });
+
+    setMessages((current) => [...current, ...step.chatMessages]);
+    setStatus(step.status);
+    setApprovedPayload(step.approvedPayload);
+  }
+
+  function handleRejectSendPlan() {
+    const step = buildSendPlanRejectionStep();
+    setMessages((current) => [...current, ...step.chatMessages]);
+    setStatus(step.status);
+    setApprovedPayload(null);
   }
 
   return (
@@ -123,6 +151,21 @@ export function Dashboard({ initialData }: Props) {
           <section className="card stack">
             <h2>Send Plan Review</h2>
             <pre>{JSON.stringify(sendPlanPreview, null, 2)}</pre>
+            <div className="row">
+              <button className="button" onClick={handleApproveSendPlan}>
+                Approve Send Plan
+              </button>
+              <button className="button danger" onClick={handleRejectSendPlan}>
+                Reject
+              </button>
+            </div>
+          </section>
+        ) : null}
+
+        {status === "approved_json_ready" && approvedPayload ? (
+          <section className="card stack">
+            <h2>Approved JSON</h2>
+            <pre>{JSON.stringify(approvedPayload, null, 2)}</pre>
           </section>
         ) : null}
       </div>
