@@ -3,6 +3,7 @@ import {
   buildBlockedNoRecipientsMessage,
   buildApprovedPayload,
   buildDraftMessage,
+  buildSendPlanPreview,
   extractPhoneNumbers
 } from "@/lib/agent-runner";
 
@@ -39,5 +40,19 @@ describe("agent runner", () => {
     expect(buildBlockedNoRecipientsMessage()).toBe(
       "I could not find any phone numbers in that request."
     );
+  });
+
+  it("builds a send-plan preview that preserves the approved draft text", () => {
+    expect(
+      buildSendPlanPreview({
+        senderIdentity: "+6591240000",
+        recipients: ["+8123", "+81234"],
+        message: "Custom approved copy"
+      })
+    ).toEqual({
+      senderIdentity: "+6591240000",
+      recipients: ["+8123", "+81234"],
+      message: "Custom approved copy"
+    });
   });
 });

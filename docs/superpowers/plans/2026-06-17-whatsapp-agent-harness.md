@@ -161,8 +161,8 @@ git commit -m "test: cover missing recipient extraction case"
 
 **Files:**
 - Modify: `src/components/Dashboard.tsx`
-
-- [ ] **Step 1: Write the failing test**
+commit -m "test: cover missing recipient extraction case
+- [x] **Step 1: Write the failing test**
 
 ```typescript
 import { describe, expect, it } from "vitest";
@@ -181,7 +181,7 @@ describe("approved payload flow", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `npm test -- tests/agent-runner.test.ts`
 Expected: PASS if already covered; if so, proceed because the UI work is now the missing implementation layer.
