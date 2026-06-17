@@ -35,3 +35,48 @@ export function buildSendPlanPreview(input: {
     message: input.message
   };
 }
+
+export function buildInitialAgentStep(prompt: string) {
+  const recipients = extractPhoneNumbers(prompt);
+  const userMessage = `User: ${prompt}`;
+
+  if (!recipients.length) {
+    return {
+      status: "blocked_no_recipients" as const,
+      chatMessages: [userMessage, `Agent: ${buildBlockedNoRecipientsMessage()}`]
+    };
+  }
+
+  return {
+    status: "awaiting_draft_approval" as const,
+    recipients,
+    draftMessage: buildDraftMessage(),
+    chatMessages: [
+      userMessage,
+      `Agent: I found ${recipients.length} recipient(s) and prepared a draft.`
+    ]
+  };
+}
+
+export function buildDraftApprovalStep(input: {
+  senderIdentity: string;
+  recipients: string[];
+  approvedMessage: string;
+}) {
+  return {
+    status: "awaiting_send_plan_approval" as const,
+    sendPlanPreview: buildSendPlanPreview({
+      senderIdentity: input.senderIdentity,
+      recipients: input.recipients,
+      message: input.approvedMessage
+    }),
+    chatMessages: ["Agent: Draft approved. Preparing send plan."]
+  };
+}
+
+export function buildDraftRejectionStep() {
+  return {
+    status: "draft_rejected" as const,
+    chatMessages: ["Agent: Draft rejected."]
+  };
+}

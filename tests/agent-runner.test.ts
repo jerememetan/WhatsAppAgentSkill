@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildDraftApprovalStep,
+  buildDraftRejectionStep,
   buildInitialAgentStep,
   buildBlockedNoRecipientsMessage,
   buildApprovedPayload,
@@ -77,6 +79,31 @@ describe("agent runner", () => {
         "User: do a whatsapp outreach for +8123 and +81234",
         "Agent: I found 2 recipient(s) and prepared a draft."
       ]
+    });
+  });
+
+  it("builds a send-plan-ready step after draft approval", () => {
+    expect(
+      buildDraftApprovalStep({
+        senderIdentity: "+6591240000",
+        recipients: ["+8123", "+81234"],
+        approvedMessage: "Custom approved copy"
+      })
+    ).toEqual({
+      status: "awaiting_send_plan_approval",
+      sendPlanPreview: {
+        senderIdentity: "+6591240000",
+        recipients: ["+8123", "+81234"],
+        message: "Custom approved copy"
+      },
+      chatMessages: ["Agent: Draft approved. Preparing send plan."]
+    });
+  });
+
+  it("builds a stopped step after draft rejection", () => {
+    expect(buildDraftRejectionStep()).toEqual({
+      status: "draft_rejected",
+      chatMessages: ["Agent: Draft rejected."]
     });
   });
 });
