@@ -1,0 +1,158 @@
+:root {
+  color-scheme: light;
+  --background: #f7f7f5;
+  --foreground: #20201d;
+  --muted: #6b6a64;
+  --card: #ffffff;
+  --border: #dedbd2;
+  --accent: #0b7a4b;
+  --danger: #a5342f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.page {
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 32px 20px 56px;
+}
+
+.hero,
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(32, 32, 29, 0.06);
+}
+
+.hero {
+  margin-bottom: 18px;
+  padding: 28px;
+}
+
+.hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  letter-spacing: -0.05em;
+}
+
+.hero p,
+.muted {
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.card {
+  padding: 20px;
+}
+
+.card h2 {
+  margin: 0 0 12px;
+}
+
+.stack {
+  display: grid;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+input,
+textarea {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  width: 100%;
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.button {
+  background: var(--accent);
+  border: 0;
+  border-radius: 999px;
+  color: white;
+  padding: 10px 16px;
+}
+
+.button.secondary {
+  background: #e9e6dc;
+  color: var(--foreground);
+}
+
+.button.danger {
+  background: var(--danger);
+}
+
+.pill {
+  background: #ecf6f1;
+  border-radius: 999px;
+  color: var(--accent);
+  display: inline-flex;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.list li {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  list-style: none;
+  padding: 12px;
+}
+
+pre {
+  background: #20201d;
+  border-radius: 12px;
+  color: #f7f7f5;
+  overflow: auto;
+  padding: 12px;
+}
