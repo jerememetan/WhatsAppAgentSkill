@@ -1,0 +1,21 @@
+export function extractPhoneNumbers(prompt: string): string[] {
+  const matches = prompt.match(/\+\d+/g) ?? [];
+  return Array.from(new Set(matches));
+}
+
+export function buildDraftMessage(): string {
+  return "Hi, I’m reaching out because we help teams run outreach more safely. Would it be worth a quick look?";
+}
+
+export function buildApprovedPayload(input: {
+  senderIdentity: string;
+  recipients: string[];
+  message: string;
+}) {
+  return {
+    senderIdentity: input.senderIdentity,
+    recipients: input.recipients.map((phoneNumber) => ({ phoneNumber })),
+    message: input.message,
+    approved: true
+  };
+}

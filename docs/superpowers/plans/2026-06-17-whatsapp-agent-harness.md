@@ -30,7 +30,7 @@
 - Create: `src/lib/agent-runner.ts`
 - Create: `tests/agent-runner.test.ts`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```typescript
 import { describe, expect, it } from "vitest";
@@ -69,12 +69,12 @@ describe("agent runner", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `npm test -- tests/agent-runner.test.ts`
 Expected: FAIL with missing `@/lib/agent-runner`.
 
-- [ ] **Step 3: Write minimal implementation**
+- [x] **Step 3: Write minimal implementation**
 
 ```typescript
 export function extractPhoneNumbers(prompt: string): string[] {
@@ -100,12 +100,12 @@ export function buildApprovedPayload(input: {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `npm test -- tests/agent-runner.test.ts`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/agent-runner.ts tests/agent-runner.test.ts
