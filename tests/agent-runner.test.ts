@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildBlockedNoRecipientsMessage,
   buildApprovedPayload,
   buildDraftMessage,
   extractPhoneNumbers
@@ -32,5 +33,11 @@ describe("agent runner", () => {
         "Hi, I’m reaching out because we help teams run outreach more safely. Would it be worth a quick look?",
       approved: true
     });
+  });
+
+  it("builds a clear blocked message when no phone numbers are found", () => {
+    expect(buildBlockedNoRecipientsMessage()).toBe(
+      "I could not find any phone numbers in that request."
+    );
   });
 });
